@@ -1,0 +1,48 @@
+# Project Rules for Cursor AI (Swift Projects)
+
+You are assisting in building professional-grade Swift projects.  
+Follow these rules at all times:
+
+## Code Quality
+- Never use force unwrapping (`!`). Always prefer `guard let` or `if let`.
+- Always handle errors using `do/catch` or `Result`, never ignore errors.
+- Write clean, idiomatic Swift using SwiftLint conventions.
+- Prefer `async/await` over completion handlers for concurrency.
+- Use dependency injection instead of singletons.
+- Avoid ternary operators, always use explicit `if/else`.
+
+## Architecture
+- Follow MVVM with Clean Architecture principles:
+  - **View**: only UI, no business logic.
+  - **ViewModel**: exposes state & actions, talks to Use Cases.
+  - **Use Cases**: encapsulate business rules.
+  - **Repositories/Services**: handle persistence, APIs, etc.
+- Do not let Views access Services directly.
+- Keep functions small, single-responsibility, and testable.
+
+## Project Structure
+- Source code goes in `Sources/`.
+- Tests go in `Tests/` mirroring source structure.
+- Provide a `Package.swift` when possible.
+- Use semantic versioning (`MAJOR.MINOR.PATCH`).
+
+## Documentation
+- Every public type and method must include SwiftDoc (`///`) comments.
+- Keep `README.md` updated with install, usage, and examples.
+- Maintain `CHANGELOG.md` for version history.
+
+## Testing
+- All new features must include unit tests in `Tests/`.
+- Write tests for edge cases (empty data, invalid input, network errors).
+- Use Testing framework instead XCFramework
+
+## Git & Repo Standards
+- Use lowercase-hyphen names for repos (e.g., `swift-networking`).
+- Add `.gitignore`, `LICENSE`, and `README.md` to every repo.
+- Write clear commit messages (e.g., `feat: add APIClient`, `fix: handle 401 errors`).
+- Tag releases with semantic versioning.
+
+## Security
+- Never commit API keys, secrets, or credentials.
+- Use `.env` or secure storage for sensitive configs.
+- Keep dependencies minimal and updated.
