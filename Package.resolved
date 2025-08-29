@@ -1,6 +1,15 @@
 {
   "pins" : [
     {
+      "identity" : "rr-swift-foundation",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/rirp53021/rr-swift-foundation.git",
+      "state" : {
+        "revision" : "cec1be219c0465b26632e361e9c691b2bf52f8b0",
+        "version" : "1.7.1"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/swiftlang/swift-syntax.git",
