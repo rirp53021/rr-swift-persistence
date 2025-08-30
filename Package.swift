@@ -6,10 +6,10 @@ import PackageDescription
 let package = Package(
     name: "RRPersistence",
     platforms: [
-        .iOS(.v13),
-        .macOS(.v11),
-        .tvOS(.v13),
-        .watchOS(.v6),
+        .iOS(.v15),
+        .macOS(.v12),
+        .tvOS(.v15),
+        .watchOS(.v8),
         .visionOS(.v1)
     ],
     products: [
@@ -19,7 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.7.1"),
+        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.7.2"),
         .package(url: "https://github.com/apple/swift-testing.git", from: "0.5.0")
     ],
     targets: [

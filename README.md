@@ -231,3 +231,4 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 ## Version History
 
 - **1.0.0**: Initial release with UserDefaults, Keychain, and In-Memory Cache support
+

@@ -15,50 +15,45 @@ public protocol StorageProtocol {
     /// - Parameters:
     ///   - value: The value to store
     ///   - key: The key to associate with the value
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func store(_ value: Value, for key: Key) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func store(_ value: Value, for key: Key) -> Result<Void, StorageError>
     
     /// Retrieves a value for a given key
     /// - Parameter key: The key to retrieve the value for
-    /// - Returns: The stored value, if any
-    func retrieve(for key: Key) -> Value?
+    /// - Returns: Result containing the stored value or error
+    func retrieve(for key: Key) -> Result<Value?, StorageError>
     
     /// Removes a value for a given key
     /// - Parameter key: The key to remove the value for
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func remove(for key: Key) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func remove(for key: Key) -> Result<Void, StorageError>
     
     /// Removes all stored values
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func clear() -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func clear() -> Result<Void, StorageError>
     
     /// Checks if a value exists for a given key
     /// - Parameter key: The key to check
-    /// - Returns: True if a value exists, false otherwise
-    func exists(for key: Key) -> Bool
+    /// - Returns: Result containing existence status or error
+    func exists(for key: Key) -> Result<Bool, StorageError>
 }
 
 /// Protocol for storage that supports batch operations
 public protocol BatchStorageProtocol: StorageProtocol {
     /// Stores multiple key-value pairs
     /// - Parameter items: Dictionary of key-value pairs to store
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func storeBatch(_ items: [Key: Value]) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func storeBatch(_ items: [Key: Value]) -> Result<Void, StorageError>
     
     /// Retrieves multiple values for given keys
     /// - Parameter keys: Array of keys to retrieve values for
-    /// - Returns: Dictionary of key-value pairs
-    func retrieveBatch(for keys: [Key]) -> [Key: Value]
+    /// - Returns: Result containing dictionary of key-value pairs or error
+    func retrieveBatch(for keys: [Key]) -> Result<[Key: Value], StorageError>
     
     /// Removes multiple values for given keys
     /// - Parameter keys: Array of keys to remove values for
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func removeBatch(for keys: [Key]) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func removeBatch(for keys: [Key]) -> Result<Void, StorageError>
 }
 
 /// Protocol for storage that supports expiration
@@ -68,19 +63,17 @@ public protocol ExpirableStorageProtocol: StorageProtocol {
     ///   - value: The value to store
     ///   - key: The key to associate with the value
     ///   - expirationDate: When the value should expire
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func store(_ value: Value, for key: Key, expirationDate: Date) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func store(_ value: Value, for key: Key, expirationDate: Date) -> Result<Void, StorageError>
     
     /// Retrieves a value if it hasn't expired
     /// - Parameter key: The key to retrieve the value for
-    /// - Returns: The stored value if not expired, nil otherwise
-    func retrieveValid(for key: Key) -> Value?
+    /// - Returns: Result containing the stored value if not expired, nil otherwise, or error
+    func retrieveValid(for key: Key) -> Result<Value?, StorageError>
     
     /// Removes all expired values
-    /// - Returns: Number of expired values removed
-    @discardableResult
-    func removeExpired() -> Int
+    /// - Returns: Result containing the number of expired values removed or error
+    func removeExpired() -> Result<Int, StorageError>
 }
 
 /// Protocol for storage that supports encryption
@@ -90,14 +83,14 @@ public protocol EncryptedStorageProtocol: StorageProtocol {
     ///   - value: The value to encrypt and store
     ///   - key: The key to associate with the value
     ///   - encryptionKey: The key used for encryption
-    /// - Returns: Success status of the operation
-    @discardableResult
-    func storeEncrypted(_ value: Value, for key: Key, encryptionKey: Data) -> Bool
+    /// - Returns: Result indicating success or failure with error details
+    func storeEncrypted(_ value: Value, for key: Key, encryptionKey: Data) -> Result<Void, StorageError>
     
     /// Retrieves and decrypts a value for a given key
     /// - Parameters:
     ///   - key: The key to retrieve the value for
     ///   - encryptionKey: The key used for decryption
-    /// - Returns: The decrypted value, if any
-    func retrieveDecrypted(for key: Key, encryptionKey: Data) -> Value?
+    /// - Returns: Result containing the decrypted value or error
+    func retrieveDecrypted(for key: Key, encryptionKey: Data) -> Result<Value?, StorageError>
 }
+

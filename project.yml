@@ -2,10 +2,10 @@ name: RRPersistence
 options:
   bundleIdPrefix: com.rrpersistence
   deploymentTarget:
-    iOS: "13.0"
-    macOS: "11.0"
-    tvOS: "13.0"
-    watchOS: "6.0"
+    iOS: "15.0"
+    macOS: "12.0"
+    tvOS: "15.0"
+    watchOS: "8.0"
     visionOS: "1.0"
   xcodeVersion: "15.0"
   generateEmptyDirectories: true
@@ -15,7 +15,8 @@ options:
 
 packages:
   RRFoundation:
-    path: ../rr-swift-foundation
+    url: https://github.com/rirp53021/rr-swift-foundation.git
+    majorVersion: 1.7.2
     generateScheme: false
 
 settings:
@@ -30,7 +31,7 @@ targets:
   RRPersistence:
     type: framework
     platform: iOS
-    deploymentTarget: "13.0"
+    deploymentTarget: "15.0"
     sources:
       - path: Sources/RRPersistence
     dependencies:
@@ -57,7 +58,7 @@ targets:
   RRPersistenceTests:
     type: bundle.unit-test
     platform: iOS
-    deploymentTarget: "13.0"
+    deploymentTarget: "15.0"
     sources:
       - path: Tests/RRPersistenceTests
     dependencies:
@@ -83,7 +84,7 @@ targets:
         CFBundleResourceSpecification: InfoPlist.strings
         NSHumanReadableCopyright: "Copyright (c) 2024 Ronald Ruiz. All rights reserved."
         LSRequiresIPhoneOS: true
-        MinimumOSVersion: "13.0"
+        MinimumOSVersion: "15.0"
 
 schemes:
   RRPersistence:
@@ -101,3 +102,4 @@ schemes:
       config: Debug
     archive:
       config: Release
+
