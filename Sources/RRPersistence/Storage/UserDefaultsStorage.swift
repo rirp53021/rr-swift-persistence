@@ -263,14 +263,11 @@ public extension UserDefaultsStorage {
         let result = Result.catching {
             try JSONEncoder().encode(value)
         }
+        .mapError { error in
+            StorageError.encodingFailed(key)
+        }
         .flatMap { data in
             self.store(data, for: key)
-        }
-        .mapError { error in
-            if let storageError = error as? StorageError {
-                return storageError
-            }
-            return StorageError.encodingFailed(key)
         }
         
         result.onSuccess { _ in

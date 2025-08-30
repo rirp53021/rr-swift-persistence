@@ -236,14 +236,11 @@ public extension KeychainStorage {
         let result = Result.catching {
             try JSONEncoder().encode(value)
         }
+        .mapError { error in
+            StorageError.encodingFailed(key)
+        }
         .flatMap { data in
             self.store(data, for: key)
-        }
-        .mapError { error in
-            if let storageError = error as? StorageError {
-                return storageError
-            }
-            return StorageError.encodingFailed(key)
         }
         
         result.onSuccess { _ in
@@ -312,10 +309,7 @@ public extension KeychainStorage {
                 return String(data: data, encoding: .utf8)
             }
             .mapError { error in
-                if let storageError = error as? StorageError {
-                    return storageError
-                }
-                return StorageError.decodingFailed(key)
+                StorageError.decodingFailed(key)
             }
     }
 }

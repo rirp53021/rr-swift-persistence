@@ -55,7 +55,7 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
     public func store(_ value: Value, for key: Key) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 // Check if we need to evict items
                 if self.cache.count >= self.maxSize {
@@ -71,27 +71,30 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to store value for key: \(key)", operation: "store")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "store", duration: duration)
             self.logger.debug("Successfully stored value for key: \(key)")
         }
+        
+        return result
     }
     
     public func retrieve(for key: Key) -> Result<Value?, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
-            return self.queue.sync {
-                guard let item = self.cache[key] else { return nil }
+        let result = Result.catching {
+            self.queue.sync {
+                guard let item = self.cache[key] else { return Optional<Value>.none }
                 
                 // Check if item is expired
                 if item.isExpired {
                     self.cache.removeValue(forKey: key)
-                    return nil
+                    return Optional<Value>.none
                 }
                 
-                return item.value
+                return Optional<Value>.some(item.value)
             }
         }
         .mapError { error in
@@ -99,7 +102,8 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to retrieve value for key: \(key)", operation: "retrieve")
             return storageError
         }
-        .onSuccess { value in
+        
+        result.onSuccess { value in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "retrieve", duration: duration)
             if value != nil {
@@ -108,32 +112,38 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
                 self.logger.debug("No value found for key: \(key)")
             }
         }
+        
+        return result
     }
     
     public func remove(for key: Key) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
-            return self.queue.sync {
+        let result = Result.catching {
+            self.queue.sync {
                 self.cache.removeValue(forKey: key) != nil
             }
         }
+        .map { _ in () } // Convert Bool to Void
         .mapError { error in
             let storageError = StorageError.from(error)
             storageError.log(context: "Failed to remove value for key: \(key)", operation: "remove")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "remove", duration: duration)
             self.logger.debug("Successfully removed value for key: \(key)")
         }
+        
+        return result
     }
     
     public func clear() -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 self.cache.removeAll()
             }
@@ -143,17 +153,20 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to clear cache", operation: "clear")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "clear", duration: duration)
             self.logger.debug("Successfully cleared cache")
         }
+        
+        return result
     }
     
     public func exists(for key: Key) -> Result<Bool, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 guard let item = self.cache[key] else { return false }
                 return !item.isExpired
@@ -164,11 +177,14 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to check existence for key: \(key)", operation: "exists")
             return storageError
         }
-        .onSuccess { exists in
+        
+        result.onSuccess { exists in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "exists", duration: duration)
             self.logger.debug("Key '\(key)' exists: \(exists)")
         }
+        
+        return result
     }
     
     // MARK: - BatchStorageProtocol Implementation
@@ -176,7 +192,7 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
     public func storeBatch(_ items: [Key: Value]) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 // Check if we need to evict items
                 let neededSpace = items.count
@@ -195,17 +211,20 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to store batch of \(items.count) items", operation: "storeBatch")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "storeBatch", duration: duration)
             self.logger.debug("Successfully stored batch of \(items.count) items")
         }
+        
+        return result
     }
     
     public func retrieveBatch(for keys: [Key]) -> Result<[Key: Value], StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 var result: [Key: Value] = [:]
                 
@@ -223,17 +242,20 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to retrieve batch for \(keys.count) keys", operation: "retrieveBatch")
             return storageError
         }
-        .onSuccess { result in
+        
+        result.onSuccess { result in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "retrieveBatch", duration: duration)
             self.logger.debug("Successfully retrieved batch: \(result.count)/\(keys.count) items found")
         }
+        
+        return result
     }
     
     public func removeBatch(for keys: [Key]) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 for key in keys {
                     self.cache.removeValue(forKey: key)
@@ -245,11 +267,14 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to remove batch of \(keys.count) keys", operation: "removeBatch")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "removeBatch", duration: duration)
             self.logger.debug("Successfully removed batch of \(keys.count) keys")
         }
+        
+        return result
     }
     
     // MARK: - ExpirableStorageProtocol Implementation
@@ -257,7 +282,7 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
     public func store(_ value: Value, for key: Key, expirationDate: Date) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 // Check if we need to evict items
                 if self.cache.count >= self.maxSize {
@@ -273,11 +298,14 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to store value with expiration for key: \(key)", operation: "storeWithExpiration")
             return storageError
         }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "storeWithExpiration", duration: duration)
             self.logger.debug("Successfully stored value with expiration for key: \(key)")
         }
+        
+        return result
     }
     
     public func retrieveValid(for key: Key) -> Result<Value?, StorageError> {
@@ -287,7 +315,7 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
     public func removeExpired() -> Result<Int, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             return self.queue.sync {
                 let expiredKeys = self.cache.compactMap { key, item in
                     item.isExpired ? key : nil
@@ -303,13 +331,16 @@ public final class InMemoryCache: StorageProtocol, BatchStorageProtocol, Expirab
             storageError.log(context: "Failed to remove expired items", operation: "removeExpired")
             return storageError
         }
-        .onSuccess { count in
+        
+        result.onSuccess { count in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "removeExpired", duration: duration)
             if count > 0 {
                 self.logger.debug("Successfully removed \(count) expired items")
             }
         }
+        
+        return result
     }
     
     // MARK: - Private Methods
@@ -402,23 +433,23 @@ public extension InMemoryCache {
     func store<T: Codable>(_ value: T, for key: Key) -> Result<Void, StorageError> {
         let startTime = Date()
         
-        return Result.catching {
+        let result = Result.catching {
             try JSONEncoder().encode(value)
+        }
+        .mapError { error in
+            StorageError.encodingFailed(key)
         }
         .flatMap { data in
             self.store(data, for: key)
         }
-        .mapError { error in
-            if let storageError = error as? StorageError {
-                return storageError
-            }
-            return StorageError.encodingFailed(key)
-        }
-        .onSuccess { _ in
+        
+        result.onSuccess { _ in
             let duration = Date().timeIntervalSince(startTime)
             self.logger.logPerformance(operation: "storeCodable", duration: duration)
             self.logger.debug("Successfully stored Codable value for key: \(key)")
         }
+        
+        return result
     }
     
     /// Retrieves a Codable value for a given key
@@ -427,8 +458,8 @@ public extension InMemoryCache {
     func retrieve<T: Codable>(_ type: T.Type, for key: Key) -> Result<T?, StorageError> {
         let startTime = Date()
         
-        return retrieve(for: key)
-            .flatMap { value in
+        let result = retrieve(for: key)
+            .flatMap { value -> Result<T?, StorageError> in
                 guard let data = value as? Data else {
                     return .success(nil)
                 }
@@ -440,15 +471,18 @@ public extension InMemoryCache {
                     StorageError.decodingFailed(key)
                 }
             }
-            .onSuccess { value in
-                let duration = Date().timeIntervalSince(startTime)
-                self.logger.logPerformance(operation: "retrieveCodable", duration: duration)
-                if value != nil {
-                    self.logger.debug("Successfully retrieved Codable value for key: \(key)")
-                } else {
-                    self.logger.debug("No Codable value found for key: \(key)")
-                }
+        
+        result.onSuccess { value in
+            let duration = Date().timeIntervalSince(startTime)
+            self.logger.logPerformance(operation: "retrieveCodable", duration: duration)
+            if value != nil {
+                self.logger.debug("Successfully retrieved Codable value for key: \(key)")
+            } else {
+                self.logger.debug("No Codable value found for key: \(key)")
             }
+        }
+        
+        return result
     }
     
     /// Stores a value with a time-to-live (TTL)

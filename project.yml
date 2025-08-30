@@ -16,7 +16,7 @@ options:
 packages:
   RRFoundation:
     url: https://github.com/rirp53021/rr-swift-foundation.git
-    majorVersion: 1.7.2
+    majorVersion: 1.7.3
     generateScheme: false
 
 settings:
