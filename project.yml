@@ -13,12 +13,6 @@ options:
   createIntermediateGroups: true
   generateSchemes: true
 
-packages:
-  RRFoundation:
-    url: https://github.com/rirp53021/rr-swift-foundation.git
-    majorVersion: 1.7.3
-    generateScheme: false
-
 settings:
   SWIFT_VERSION: "5.9"
   ENABLE_TESTING_SEARCH_PATHS: true
@@ -26,6 +20,13 @@ settings:
   SWIFT_INSTALL_OBJC_HEADER: false
   BUILD_LIBRARY_FOR_DISTRIBUTION: true
   SWIFT_COMPILATION_MODE: "wholemodule"
+  OTHER_SWIFT_FLAGS: "-Xfrontend -warn-long-function-bodies=100 -Xfrontend -warn-long-expression-type-checking=100"
+
+packages:
+  RRFoundation:
+    url: https://github.com/rirp53021/rr-swift-foundation.git
+    from: 1.7.11
+    generateScheme: false
 
 targets:
   RRPersistence:
@@ -53,7 +54,7 @@ targets:
         CFBundleDisplayName: RRPersistence
         CFBundleIdentifier: com.rrpersistence.core
         CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.0"
+        CFBundleShortVersionString: "1.0.1"
         CFBundlePackageType: FMWK
         CFBundleInfoDictionaryVersion: "6.0"
 
@@ -78,7 +79,7 @@ targets:
         CFBundleDisplayName: RRPersistenceTests
         CFBundleIdentifier: com.rrpersistence.tests
         CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.0"
+        CFBundleShortVersionString: "1.0.1"
         CFBundlePackageType: BNDL
         CFBundleInfoDictionaryVersion: "6.0"
         CFBundleDevelopmentRegion: en
