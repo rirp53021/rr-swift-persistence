@@ -19,14 +19,14 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.7.11"),
+        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.8.0"),
         .package(url: "https://github.com/apple/swift-testing.git", from: "0.5.0")
     ],
     targets: [
         .target(
             name: "RRPersistence",
             dependencies: [
-                .product(name: "RRFoundation", package: "RRFoundation")
+                .product(name: "RRFoundation", package: "rr-swift-foundation")
             ],
             path: "Sources/RRPersistence"
         ),

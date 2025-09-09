@@ -25,7 +25,7 @@ settings:
 packages:
   RRFoundation:
     url: https://github.com/rirp53021/rr-swift-foundation.git
-    from: 1.7.11
+    from: 1.8.0
     generateScheme: false
 
 targets:
@@ -54,7 +54,7 @@ targets:
         CFBundleDisplayName: RRPersistence
         CFBundleIdentifier: com.rrpersistence.core
         CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.1"
+        CFBundleShortVersionString: "1.0.2"
         CFBundlePackageType: FMWK
         CFBundleInfoDictionaryVersion: "6.0"
 
@@ -79,7 +79,7 @@ targets:
         CFBundleDisplayName: RRPersistenceTests
         CFBundleIdentifier: com.rrpersistence.tests
         CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.1"
+        CFBundleShortVersionString: "1.0.2"
         CFBundlePackageType: BNDL
         CFBundleInfoDictionaryVersion: "6.0"
         CFBundleDevelopmentRegion: en
