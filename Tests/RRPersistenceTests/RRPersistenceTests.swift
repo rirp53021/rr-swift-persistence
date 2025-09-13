@@ -6,33 +6,38 @@ final class RRPersistenceTests {
     
     // MARK: - UserDefaults Storage Tests
     
-    func testUserDefaultsStorage() throws {
+    func testUserDefaultsStorage() {
         let storage = UserDefaultsStorage()
         let testKey = "test_key"
         let testValue = "test_value"
         
         // Test store and retrieve
         let storeResult = storage.store(testValue, for: testKey)
-        try #assert(storeResult == true)
+        #expect(storeResult.isSuccess)
         
-        let retrievedValue = storage.retrieve(for: testKey) as? String
-        try #assert(retrievedValue == testValue)
+        let retrievedValue = storage.retrieve(for: testKey)
+        #expect(retrievedValue.isSuccess)
+        #expect(retrievedValue.value as? String == testValue)
         
         // Test exists
-        try #assert(storage.exists(for: testKey) == true)
+        let existsResult = storage.exists(for: testKey)
+        #expect(existsResult.isSuccess)
+        #expect(existsResult.value == true)
         
         // Test remove
         let removeResult = storage.remove(for: testKey)
-        try #assert(removeResult == true)
+        #expect(removeResult.isSuccess)
         
         // Test value is removed
-        try #assert(storage.exists(for: testKey) == false)
+        let existsAfterRemove = storage.exists(for: testKey)
+        #expect(existsAfterRemove.isSuccess)
+        #expect(existsAfterRemove.value == false)
         
         // Clean up
         storage.remove(for: testKey)
     }
     
-    func testUserDefaultsStorageBatch() throws {
+    func testUserDefaultsStorageBatch() {
         let storage = UserDefaultsStorage()
         let testItems = [
             "key1": "value1",
@@ -42,21 +47,21 @@ final class RRPersistenceTests {
         
         // Test batch store
         let storeResult = storage.storeBatch(testItems)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         // Test batch retrieve
         let retrievedItems = storage.retrieveBatch(for: Array(testItems.keys))
-        try #assert(retrievedItems.count == testItems.count)
+        #expect(retrievedItems.count == testItems.count)
         
         // Test batch remove
         let removeResult = storage.removeBatch(for: Array(testItems.keys))
-        try #assert(removeResult == true)
+        #expect(removeResult == true)
         
         // Clean up
         storage.removeBatch(for: Array(testItems.keys))
     }
     
-    func testUserDefaultsStorageCodable() throws {
+    func testUserDefaultsStorageCodable() {
         struct TestModel: Codable, Equatable {
             let id: Int
             let name: String
@@ -68,11 +73,11 @@ final class RRPersistenceTests {
         
         // Test store codable
         let storeResult = storage.store(testModel, for: testKey)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         // Test retrieve codable
         let retrievedModel = storage.retrieve(TestModel.self, for: testKey)
-        try #assert(retrievedModel == testModel)
+        #expect(retrievedModel == testModel)
         
         // Clean up
         storage.remove(for: testKey)
@@ -80,30 +85,30 @@ final class RRPersistenceTests {
     
     // MARK: - In-Memory Cache Tests
     
-    func testInMemoryCache() throws {
+    func testInMemoryCache() {
         let cache = InMemoryCache(maxSize: 5)
         let testKey = "cache_test_key"
         let testValue = "cache_test_value"
         
         // Test store and retrieve
         let storeResult = cache.store(testValue, for: testKey)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         let retrievedValue = cache.retrieve(for: testKey) as? String
-        try #assert(retrievedValue == testValue)
+        #expect(retrievedValue == testValue)
         
         // Test exists
-        try #assert(cache.exists(for: testKey) == true)
+        #expect(cache.exists(for: testKey) == true)
         
         // Test remove
         let removeResult = cache.remove(for: testKey)
-        try #assert(removeResult == true)
+        #expect(removeResult == true)
         
         // Test value is removed
-        try #assert(cache.exists(for: testKey) == false)
+        #expect(cache.exists(for: testKey) == false)
     }
     
-    func testInMemoryCacheExpiration() throws {
+    func testInMemoryCacheExpiration() {
         let cache = InMemoryCache(maxSize: 10)
         let testKey = "expiration_test_key"
         let testValue = "expiration_test_value"
@@ -111,22 +116,22 @@ final class RRPersistenceTests {
         // Test store with expiration
         let expirationDate = Date().addingTimeInterval(1) // 1 second from now
         let storeResult = cache.store(testValue, for: testKey, expirationDate: expirationDate)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         // Value should exist immediately
-        try #assert(cache.exists(for: testKey) == true)
+        #expect(cache.exists(for: testKey) == true)
         
         // Wait for expiration
         Thread.sleep(forTimeInterval: 1.1)
         
         // Value should be expired now
-        try #assert(cache.exists(for: testKey) == false)
+        #expect(cache.exists(for: testKey) == false)
         
         // Clean up
         cache.remove(for: testKey)
     }
     
-    func testInMemoryCacheMaxSize() throws {
+    func testInMemoryCacheMaxSize() {
         let cache = InMemoryCache(maxSize: 3)
         
         // Fill cache to capacity
@@ -137,19 +142,19 @@ final class RRPersistenceTests {
         }
         
         // Cache should be at max size
-        try #assert(cache.statistics.totalItems == 3)
+        #expect(cache.statistics.totalItems == 3)
         
         // Add one more item - should trigger eviction
         cache.store("value4", for: "key4")
         
         // Cache should still be at max size
-        try #assert(cache.statistics.totalItems == 3)
+        #expect(cache.statistics.totalItems == 3)
         
         // Clean up
         cache.clear()
     }
     
-    func testInMemoryCacheBatch() throws {
+    func testInMemoryCacheBatch() {
         let cache = InMemoryCache(maxSize: 10)
         let testItems = [
             "batch_key1": "batch_value1",
@@ -159,15 +164,15 @@ final class RRPersistenceTests {
         
         // Test batch store
         let storeResult = cache.storeBatch(testItems)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         // Test batch retrieve
         let retrievedItems = cache.retrieveBatch(for: Array(testItems.keys))
-        try #assert(retrievedItems.count == testItems.count)
+        #expect(retrievedItems.count == testItems.count)
         
         // Test batch remove
         let removeResult = cache.removeBatch(for: Array(testItems.keys))
-        try #assert(removeResult == true)
+        #expect(removeResult == true)
         
         // Clean up
         cache.clear()
@@ -175,33 +180,33 @@ final class RRPersistenceTests {
     
     // MARK: - Keychain Storage Tests
     
-    func testKeychainStorage() throws {
+    func testKeychainStorage() {
         let storage = KeychainStorage(service: "test_service")
         let testKey = "keychain_test_key"
         let testValue = "keychain_test_value"
         
         // Test store and retrieve
         let storeResult = storage.store(testValue, for: testKey)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         let retrievedValue = storage.retrieveString(for: testKey)
-        try #assert(retrievedValue == testValue)
+        #expect(retrievedValue == testValue)
         
         // Test exists
-        try #assert(storage.exists(for: testKey) == true)
+        #expect(storage.exists(for: testKey) == true)
         
         // Test remove
         let removeResult = storage.remove(for: testKey)
-        try #assert(removeResult == true)
+        #expect(removeResult == true)
         
         // Test value is removed
-        try #assert(storage.exists(for: testKey) == false)
+        #expect(storage.exists(for: testKey) == false)
         
         // Clean up
         storage.remove(for: testKey)
     }
     
-    func testKeychainStorageCodable() throws {
+    func testKeychainStorageCodable() {
         struct TestModel: Codable, Equatable {
             let id: Int
             let name: String
@@ -213,11 +218,11 @@ final class RRPersistenceTests {
         
         // Test store codable
         let storeResult = storage.store(testModel, for: testKey)
-        try #assert(storeResult == true)
+        #expect(storeResult == true)
         
         // Test retrieve codable
         let retrievedModel = storage.retrieve(TestModel.self, for: testKey)
-        try #assert(retrievedModel == testModel)
+        #expect(retrievedModel == testModel)
         
         // Clean up
         storage.remove(for: testKey)
@@ -225,21 +230,27 @@ final class RRPersistenceTests {
     
     // MARK: - Storage Protocols Tests
     
-    func testStorageProtocols() throws {
+    func testStorageProtocols() {
         // Test that all storage implementations conform to StorageProtocol
         let userDefaultsStorage: any StorageProtocol = UserDefaultsStorage()
         let keychainStorage: any StorageProtocol = KeychainStorage(service: "test")
         let cacheStorage: any StorageProtocol = InMemoryCache()
         
         // Test that they can be used polymorphically
-        try #assert(userDefaultsStorage.store("test", for: "key") == true)
-        try #assert(keychainStorage.store("test".data(using: .utf8)!, for: "key") == true)
-        try #assert(cacheStorage.store("test", for: "key") == true)
+        #expect(userDefaultsStorage.store("test", for: "key") == true)
+        #expect(keychainStorage.store("test".data(using: .utf8)!, for: "key") == true)
+        #expect(cacheStorage.store("test", for: "key") == true)
         
-        // Clean up
-        userDefaultsStorage.remove(for: "key")
-        keychainStorage.remove(for: "key")
-        cacheStorage.remove(for: "key")
+        // Clean up - using concrete types since remove is not in protocol
+        if let userDefaults = userDefaultsStorage as? UserDefaultsStorage {
+            _ = userDefaults.remove(for: "key")
+        }
+        if let keychain = keychainStorage as? KeychainStorage {
+            _ = keychain.remove(for: "key")
+        }
+        if let cache = cacheStorage as? InMemoryCache {
+            _ = cache.remove(for: "key")
+        }
     }
 }
 

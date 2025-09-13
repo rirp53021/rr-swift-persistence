@@ -19,7 +19,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.8.0"),
+        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.8.1"),
         .package(url: "https://github.com/apple/swift-testing.git", from: "0.5.0")
     ],
     targets: [
