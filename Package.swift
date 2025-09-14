@@ -15,12 +15,13 @@ let package = Package(
     products: [
         .library(
             name: "RRPersistence",
+            type: .dynamic,
             targets: ["RRPersistence"]
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.8.1"),
-        .package(url: "https://github.com/apple/swift-testing.git", from: "0.5.0")
+        .package(url: "https://github.com/rirp53021/rr-swift-foundation.git", from: "1.9.0"),
+        .package(url: "https://github.com/apple/swift-testing.git", from: "0.99.0")
     ],
     targets: [
         .target(
@@ -32,8 +33,11 @@ let package = Package(
         ),
         .testTarget(
             name: "RRPersistenceTests",
-            dependencies: ["RRPersistence", .product(name: "Testing", package: "swift-testing")],
+            dependencies: [
+                "RRPersistence",
+                .product(name: "Testing", package: "swift-testing")
+            ],
             path: "Tests/RRPersistenceTests"
-        )
+        ),
     ]
 )

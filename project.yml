@@ -25,7 +25,7 @@ settings:
 packages:
   RRFoundation:
     url: https://github.com/rirp53021/rr-swift-foundation.git
-    from: 1.8.0
+    from: 1.9.0
     generateScheme: false
 
 targets:
@@ -35,26 +35,29 @@ targets:
     deploymentTarget: "15.0"
     sources:
       - path: Sources/RRPersistence
+        excludes:
+          - "**/*.plist"
     dependencies:
       - package: RRFoundation
     settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.rrpersistence.rrpersistence
       PRODUCT_NAME: RRPersistence
-      PRODUCT_BUNDLE_IDENTIFIER: com.rrpersistence.core
-      CLANG_ENABLE_MODULES: true
-      SWIFT_INSTALL_OBJC_HEADER: false
-      BUILD_LIBRARY_FOR_DISTRIBUTION: true
-      SWIFT_ENABLE_LIBRARY_EVOLUTION: true
+      CLANG_ENABLE_MODULES: "YES"
+      SWIFT_INSTALL_OBJC_HEADER: "NO"
+      BUILD_LIBRARY_FOR_DISTRIBUTION: "YES"
+      SWIFT_ENABLE_LIBRARY_EVOLUTION: "YES"
       SWIFT_COMPILATION_MODE: "wholemodule"
-      SKIP_INSTALL: false
-      DEFINES_MODULE: false
+      SKIP_INSTALL: "NO"
+      DEFINES_MODULE: "YES"
+      MACH_O_TYPE: mh_dylib
     info:
       path: Sources/RRPersistence/Info.plist
       properties:
         CFBundleName: RRPersistence
         CFBundleDisplayName: RRPersistence
-        CFBundleIdentifier: com.rrpersistence.core
-        CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.2"
+        CFBundleIdentifier: com.rrpersistence.rrpersistence
+        CFBundleVersion: "1.1.0"
+        CFBundleShortVersionString: "1.1.0"
         CFBundlePackageType: FMWK
         CFBundleInfoDictionaryVersion: "6.0"
 
@@ -69,40 +72,3 @@ targets:
     settings:
       PRODUCT_NAME: RRPersistenceTests
       PRODUCT_BUNDLE_IDENTIFIER: com.rrpersistence.tests
-      ENABLE_TESTING_SEARCH_PATHS: true
-      CODE_SIGNING_ALLOWED: false
-      CODE_SIGNING_REQUIRED: false
-    info:
-      path: Tests/RRPersistenceTests/Info.plist
-      properties:
-        CFBundleName: RRPersistenceTests
-        CFBundleDisplayName: RRPersistenceTests
-        CFBundleIdentifier: com.rrpersistence.tests
-        CFBundleVersion: "1.0.0"
-        CFBundleShortVersionString: "1.0.2"
-        CFBundlePackageType: BNDL
-        CFBundleInfoDictionaryVersion: "6.0"
-        CFBundleDevelopmentRegion: en
-        CFBundleExecutable: RRPersistenceTests
-        CFBundleResourceSpecification: InfoPlist.strings
-        NSHumanReadableCopyright: "Copyright (c) 2024 Ronald Ruiz. All rights reserved."
-        LSRequiresIPhoneOS: true
-        MinimumOSVersion: "15.0"
-
-schemes:
-  RRPersistence:
-    build:
-      targets:
-        RRPersistence: all
-    test:
-      targets:
-        - RRPersistenceTests
-    run:
-      config: Debug
-    profile:
-      config: Release
-    analyze:
-      config: Debug
-    archive:
-      config: Release
-

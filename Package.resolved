@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/rirp53021/rr-swift-foundation.git",
       "state" : {
-        "revision" : "ae8cd261f89e356910d64a5ef85f0518ccb68939",
-        "version" : "1.8.1"
+        "revision" : "5847912223a31a493fc5ff603ecf6405536ca585",
+        "version" : "1.9.0"
       }
     },
     {
