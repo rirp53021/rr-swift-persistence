@@ -3,7 +3,7 @@ import RRFoundation
 
 // MARK: - Storage Protocols
 
-/// Protocol defining the basic storage operations
+/// Protocol defining the basic storage operations with async/await support
 public protocol StorageProtocol {
     /// The type of key used for storage
     associatedtype Key: Hashable
@@ -16,47 +16,47 @@ public protocol StorageProtocol {
     ///   - value: The value to store
     ///   - key: The key to associate with the value
     /// - Returns: Result indicating success or failure with error details
-    func store(_ value: Value, for key: Key) -> Result<Void, StorageError>
+    func store(_ value: Value, for key: Key) async -> Result<Void, StorageError>
     
     /// Retrieves a value for a given key
     /// - Parameter key: The key to retrieve the value for
     /// - Returns: Result containing the stored value or error
-    func retrieve(for key: Key) -> Result<Value?, StorageError>
+    func retrieve(for key: Key) async -> Result<Value?, StorageError>
     
     /// Removes a value for a given key
     /// - Parameter key: The key to remove the value for
     /// - Returns: Result indicating success or failure with error details
-    func remove(for key: Key) -> Result<Void, StorageError>
+    func remove(for key: Key) async -> Result<Void, StorageError>
     
     /// Removes all stored values
     /// - Returns: Result indicating success or failure with error details
-    func clear() -> Result<Void, StorageError>
+    func clear() async -> Result<Void, StorageError>
     
     /// Checks if a value exists for a given key
     /// - Parameter key: The key to check
     /// - Returns: Result containing existence status or error
-    func exists(for key: Key) -> Result<Bool, StorageError>
+    func exists(for key: Key) async -> Result<Bool, StorageError>
 }
 
-/// Protocol for storage that supports batch operations
+/// Protocol for storage that supports batch operations with async/await
 public protocol BatchStorageProtocol: StorageProtocol {
     /// Stores multiple key-value pairs
     /// - Parameter items: Dictionary of key-value pairs to store
     /// - Returns: Result indicating success or failure with error details
-    func storeBatch(_ items: [Key: Value]) -> Result<Void, StorageError>
+    func storeBatch(_ items: [Key: Value]) async -> Result<Void, StorageError>
     
     /// Retrieves multiple values for given keys
     /// - Parameter keys: Array of keys to retrieve values for
     /// - Returns: Result containing dictionary of key-value pairs or error
-    func retrieveBatch(for keys: [Key]) -> Result<[Key: Value], StorageError>
+    func retrieveBatch(for keys: [Key]) async -> Result<[Key: Value], StorageError>
     
     /// Removes multiple values for given keys
     /// - Parameter keys: Array of keys to remove values for
     /// - Returns: Result indicating success or failure with error details
-    func removeBatch(for keys: [Key]) -> Result<Void, StorageError>
+    func removeBatch(for keys: [Key]) async -> Result<Void, StorageError>
 }
 
-/// Protocol for storage that supports expiration
+/// Protocol for storage that supports expiration with async/await
 public protocol ExpirableStorageProtocol: StorageProtocol {
     /// Stores a value with an expiration date
     /// - Parameters:
@@ -64,16 +64,16 @@ public protocol ExpirableStorageProtocol: StorageProtocol {
     ///   - key: The key to associate with the value
     ///   - expirationDate: When the value should expire
     /// - Returns: Result indicating success or failure with error details
-    func store(_ value: Value, for key: Key, expirationDate: Date) -> Result<Void, StorageError>
+    func store(_ value: Value, for key: Key, expirationDate: Date) async -> Result<Void, StorageError>
     
     /// Retrieves a value if it hasn't expired
     /// - Parameter key: The key to retrieve the value for
     /// - Returns: Result containing the stored value if not expired, nil otherwise, or error
-    func retrieveValid(for key: Key) -> Result<Value?, StorageError>
+    func retrieveValid(for key: Key) async -> Result<Value?, StorageError>
     
     /// Removes all expired values
     /// - Returns: Result containing the number of expired values removed or error
-    func removeExpired() -> Result<Int, StorageError>
+    func removeExpired() async -> Result<Int, StorageError>
 }
 
 /// Protocol for storage that supports encryption
